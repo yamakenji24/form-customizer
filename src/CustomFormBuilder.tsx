@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import type { FormField, FieldType } from "./Field.type";
+
 export const CustomFormBuilder: React.FC = () => {
   const [fields, setFields] = useState<FormField[]>([]);
 
@@ -16,7 +18,11 @@ export const CustomFormBuilder: React.FC = () => {
 
   // フィールドを更新する
   const updateField = (id: string, updatedField: Partial<FormField>) => {
-    setFields(fields.map((field) => (field.id === id ? { ...field, ...updatedField } : field)));
+    setFields(
+      fields.map((field) =>
+        field.id === id ? { ...field, ...updatedField } : field
+      )
+    );
   };
 
   // フィールドを削除する
@@ -25,7 +31,11 @@ export const CustomFormBuilder: React.FC = () => {
   };
 
   // ラジオボタンの選択肢を更新する
-  const updateOption = (fieldId: string, optionIndex: number, value: string) => {
+  const updateOption = (
+    fieldId: string,
+    optionIndex: number,
+    value: string
+  ) => {
     setFields(
       fields.map((field) =>
         field.id === fieldId
@@ -58,12 +68,19 @@ export const CustomFormBuilder: React.FC = () => {
         field.id === fieldId
           ? {
               ...field,
-              options: field.options?.filter((_, index) => index !== optionIndex),
+              options: field.options?.filter(
+                (_, index) => index !== optionIndex
+              ),
             }
           : field
       )
     );
   };
+
+  const onSave = () => {
+    console.log("保存する", fields);
+    localStorage.setItem("customFormFields", JSON.stringify(fields));
+  }
 
   return (
     <div className="flex p-4 border rounded-md">
@@ -90,6 +107,14 @@ export const CustomFormBuilder: React.FC = () => {
         >
           ラジオボタンを追加
         </button>
+
+        <button
+          type="button"
+          onClick={onSave}
+          className="w-full px-4 py-2 bg-green-400 text-black rounded-md"
+        >
+          保存する
+        </button>
       </div>
 
       {/* 右側のフィールド表示エリア */}
@@ -103,7 +128,9 @@ export const CustomFormBuilder: React.FC = () => {
                   type="text"
                   placeholder="ラベルを入力"
                   value={field.label}
-                  onChange={(e) => updateField(field.id, { label: e.target.value })}
+                  onChange={(e) =>
+                    updateField(field.id, { label: e.target.value })
+                  }
                   className="flex-grow border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 mr-4"
                 />
                 <button
@@ -150,7 +177,7 @@ export const CustomFormBuilder: React.FC = () => {
                         type="button"
                         onClick={() => removeOption(field.id, index)}
                         className="ml-2 text-red-500 hover:text-red-700"
-                        disabled={field.options.length === 1}
+                        disabled={field.options?.length === 1}
                       >
                         －
                       </button>
